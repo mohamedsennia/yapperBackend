@@ -25,7 +25,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private MessageLoggingInterceptor messageLoggingInterceptor;
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/messenger").setAllowedOrigins("http://localhost:4200").withSockJS();
+        registry.addEndpoint("/messenger").setAllowedOrigins("http://localhost:4200","https://senniayapper.netlify.app").withSockJS();
     }
 
     @Override
@@ -60,7 +60,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:4200")
+                        .allowedOrigins("http://localhost:4200","https://senniayapper.netlify.app")
+
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*");
             }

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 @CrossOrigin(
         origins = {
-                "http://localhost:4200","http://192.168.189.46:42OO"
+                "http://localhost:4200","https://senniayapper.netlify.app/"
 
         },
         methods = {

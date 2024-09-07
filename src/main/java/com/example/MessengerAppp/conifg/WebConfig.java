@@ -14,15 +14,15 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
-                .allowedOrigins("http://localhost:4200","https://senniamohamed.netlify.app/","https://trackprices.netlify.app/","null")
+                .allowedOrigins("http://localhost:4200","https://senniayapper.netlify.app")
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowCredentials(true);
         registry.addMapping("/messages/**   ")
-                .allowedOrigins("http://localhost:4200","https://senniamohamed.netlify.app/","https://trackprices.netlify.app/","null")
+                .allowedOrigins("http://localhost:4200","https://senniayapper.netlify.app")
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowCredentials(true);
         registry.addMapping("**   ")
-                .allowedOrigins("http://localhost:4200","https://senniamohamed.netlify.app/","https://trackprices.netlify.app/","null")
+                .allowedOrigins("http://localhost:4200","https://senniayapper.netlify.app/","null")
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowCredentials(true);
     }
