@@ -1,6 +1,11 @@
 package com.example.MessengerAppp.auth;
 
 import com.example.MessengerAppp.conifg.JwtService;
+import com.example.MessengerAppp.exception.AlreadyExistsException;
+import com.example.MessengerAppp.post.Post;
+import com.example.MessengerAppp.profile.Profile;
+import com.example.MessengerAppp.profile.ProfileRepositoty;
+import com.example.MessengerAppp.profile.ProfileService;
 import com.example.MessengerAppp.user.User;
 import com.example.MessengerAppp.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.ArrayList;
+
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +26,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final ProfileService  profileService;
     public CostumeResponse logIn(@RequestBody LogInRequest logInRequest){
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -30,8 +38,12 @@ public class AuthService {
     }
     public CostumeResponse signUp(@RequestBody User user){
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if(this.userRepository.findByEmail(user.getEmail()).isPresent()){
+            throw new AlreadyExistsException("Email already exists");
+        }
         userRepository.save(user);
-
+        user.setProfile(new Profile(user));
+        this.profileService.add(user.getProfile());
         return CostumeResponse.builder().token(jwtService.generateToken(user)).role(user.getRole()).id(user.getId()).build();
     }
 }

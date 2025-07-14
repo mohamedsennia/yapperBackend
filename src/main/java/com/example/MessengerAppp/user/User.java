@@ -1,7 +1,11 @@
 package com.example.MessengerAppp.user;
 
 import com.example.MessengerAppp.message.Message;
+import com.example.MessengerAppp.post.Post;
+import com.example.MessengerAppp.profile.Profile;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,9 +38,13 @@ public class User implements UserDetails {
             generator="User_sequence"
     )
     private int id;
-
+    @NotBlank(message = "First name is required")
     private String firstName;
+    @NotBlank(message = "Last name is required")
     private String lastName;
+    @Email(message = "Invalid Email Format")
+    @NotBlank(message = "Email is required")
+    @Column(unique = true)
     private String email;
     private String password;
     @Enumerated(EnumType.STRING)
@@ -45,55 +53,31 @@ public class User implements UserDetails {
     private List<Message> messagesSent;
     @OneToMany(mappedBy = "recipient")
     private List<Message> messagesReceived;
+    @OneToOne(mappedBy = "owner")
+    private Profile profile;
 
 
 
-    public int getId() {
-        return id;
-    }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
-    public String getFirstName() {
-        return firstName;
-    }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(this.role.name()));
     }
-
+    public User(int id, String firstName, String lastName, String email, String password, Role role,List<Message> messagesReceived,List<Message> messagesSent) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.messagesReceived=messagesReceived;
+        this.messagesSent=messagesSent;
+    }
     public User(int id, String firstName, String lastName, String email, String password, Role role) {
+
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -102,6 +86,19 @@ public class User implements UserDetails {
         this.role = role;
         this.messagesReceived=new ArrayList<>();
         this.messagesSent=new ArrayList<>();
+        this.profile=new Profile(this);
+    }
+    public User(String firstName, String lastName, String email, String password, Role role) {
+        System.out.println("hhh");
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.messagesReceived=new ArrayList<>();
+        this.messagesSent=new ArrayList<>();
+        this.profile=new Profile(this);
     }
 
     public String getPassword() {

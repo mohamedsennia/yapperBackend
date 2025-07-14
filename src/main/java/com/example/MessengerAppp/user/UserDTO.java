@@ -13,4 +13,7 @@ public class UserDTO {
     String firstName;
     String lastName;
     MessageDTO messageDTO;
+    int profileId;
+
+
 }

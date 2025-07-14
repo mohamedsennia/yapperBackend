@@ -25,6 +25,7 @@ public class Message {
             generator="Message_sequence"
     )
     int id;
+    @Lob
     String content;
     Date time;
 

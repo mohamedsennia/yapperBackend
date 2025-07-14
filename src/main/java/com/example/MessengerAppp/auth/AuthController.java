@@ -1,6 +1,7 @@
 package com.example.MessengerAppp.auth;
 
 import com.example.MessengerAppp.user.User;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,7 @@ private  final  AuthService authService;
 
         }
         @PostMapping("/signUp")
-        public ResponseEntity<CostumeResponse> signUp(@RequestBody User user){
+        public ResponseEntity<CostumeResponse> signUp(@Valid @RequestBody User user){
                return new ResponseEntity<>(this.authService.signUp(user), HttpStatus.OK);
         }
 

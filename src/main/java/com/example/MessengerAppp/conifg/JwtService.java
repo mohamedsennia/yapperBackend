@@ -54,7 +54,9 @@ public class JwtService {
     private boolean isTokenExpeired(String token) {
         return extractExperationDate(token).before(new Date(System.currentTimeMillis()));
     }
-
+    public String exractId(String token){
+        return extractClaim(token,Claims::getId);
+    }
     private Date extractExperationDate(String token) {
             return extractClaim(token,Claims::getExpiration);
     }
