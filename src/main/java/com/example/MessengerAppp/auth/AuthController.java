@@ -40,6 +40,7 @@ private  final  AuthService authService;
         }
         @PostMapping("/signUp")
         public ResponseEntity<CostumeResponse> signUp(@Valid @RequestBody User user){
+            System.out.println("Controller");
                return new ResponseEntity<>(this.authService.signUp(user), HttpStatus.OK);
         }
 

@@ -29,7 +29,7 @@ public class UserController {
     }
     @GetMapping("getUser/{id}")
     UserDTO  findUserById(@PathVariable int id){
-        System.out.println(id);
+
         return  this.userService.findUserById(id);
     }
 }

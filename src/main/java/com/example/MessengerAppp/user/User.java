@@ -6,10 +6,12 @@ import com.example.MessengerAppp.profile.Profile;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,11 +23,13 @@ import java.util.List;
 @Entity
 @Table(name = "_User")
 
-@Data
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class User implements UserDetails {
+
+
     @Id
     @SequenceGenerator(
             name = "User_sequence",
@@ -46,10 +50,12 @@ public class User implements UserDetails {
     @NotBlank(message = "Email is required")
     @Column(unique = true)
     private String email;
+
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
-    @OneToMany(mappedBy = "sender")
+    @OneToMany( mappedBy = "sender")
+
     private List<Message> messagesSent;
     @OneToMany(mappedBy = "recipient")
     private List<Message> messagesReceived;
@@ -100,7 +106,69 @@ public class User implements UserDetails {
         this.messagesSent=new ArrayList<>();
         this.profile=new Profile(this);
     }
+    public int getId() {
+        return id;
+    }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public List<Message> getMessagesSent() {
+        return messagesSent;
+    }
+
+    public void setMessagesSent(List<Message> messagesSent) {
+        this.messagesSent = messagesSent;
+    }
+
+    public List<Message> getMessagesReceived() {
+        return messagesReceived;
+    }
+
+    public void setMessagesReceived(List<Message> messagesReceived) {
+        this.messagesReceived = messagesReceived;
+    }
+
+    public Profile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
+    }
     public String getPassword() {
         return password;
     }

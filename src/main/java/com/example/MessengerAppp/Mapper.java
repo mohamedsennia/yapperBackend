@@ -39,7 +39,7 @@ public class Mapper {
         return new ProfileDTO(profile.getId(),Mapper.toUserDTO(profile.getOwner()),profile.getPosts().stream().map(Mapper::toPostDTO).collect(Collectors.toList()));
     }
 
-    private static PostDTO toPostDTO(Post post) {
+    public static PostDTO toPostDTO(Post post) {
         return new PostDTO(post.getId(), post.getContent(), post.getDate(),post.getType(),Mapper.toUserDTO(post.getProfile().getOwner()),post.getReplies().stream().map(Mapper::toPostDTO).collect(Collectors.toList()));
     }
 

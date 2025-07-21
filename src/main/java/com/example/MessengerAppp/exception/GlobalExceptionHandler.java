@@ -22,4 +22,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String>  AlreadyExistsException(AlreadyExistsException exception){
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
     }
+    @ExceptionHandler(NotFoundException.class)
+    public  ResponseEntity<String> NotFoundException(NotFoundException exception){
+        return new ResponseEntity<>(exception.getMessage(),HttpStatus.NOT_FOUND);
+    }
 }

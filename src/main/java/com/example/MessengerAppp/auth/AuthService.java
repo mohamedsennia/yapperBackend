@@ -28,6 +28,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final ProfileService  profileService;
     public CostumeResponse logIn(@RequestBody LogInRequest logInRequest){
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         logInRequest.getUserEmail(),logInRequest.getPassword()
@@ -37,10 +38,12 @@ public class AuthService {
         return CostumeResponse.builder().token(jwtService.generateToken(user)).role(user.getRole()).id(user.getId()).build();
     }
     public CostumeResponse signUp(@RequestBody User user){
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         if(this.userRepository.findByEmail(user.getEmail()).isPresent()){
             throw new AlreadyExistsException("Email already exists");
         }
+
         userRepository.save(user);
         user.setProfile(new Profile(user));
         this.profileService.add(user.getProfile());
