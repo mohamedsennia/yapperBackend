@@ -6,7 +6,9 @@ import com.example.MessengerAppp.post.Post;
 import com.example.MessengerAppp.profile.Profile;
 import com.example.MessengerAppp.profile.ProfileRepositoty;
 import com.example.MessengerAppp.profile.ProfileService;
+import com.example.MessengerAppp.user.AddUserDTO;
 import com.example.MessengerAppp.user.User;
+import com.example.MessengerAppp.user.UserMapper;
 import com.example.MessengerAppp.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,16 +39,17 @@ public class AuthService {
         User user=this.userRepository.findByEmail(logInRequest.getUserEmail()).orElseThrow(()->new UsernameNotFoundException("user not found")) ;
         return CostumeResponse.builder().token(jwtService.generateToken(user)).role(user.getRole()).id(user.getId()).build();
     }
-    public CostumeResponse signUp(@RequestBody User user){
+    public CostumeResponse signUp(AddUserDTO user){
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         if(this.userRepository.findByEmail(user.getEmail()).isPresent()){
             throw new AlreadyExistsException("Email already exists");
         }
-
-        userRepository.save(user);
-        user.setProfile(new Profile(user));
-        this.profileService.add(user.getProfile());
-        return CostumeResponse.builder().token(jwtService.generateToken(user)).role(user.getRole()).id(user.getId()).build();
+        User user1= UserMapper.getUser(user);
+        user1.follows(user1);
+        userRepository.save(user1);
+        user1.setProfile(new Profile(user1));
+        this.profileService.add(user1.getProfile());
+        return CostumeResponse.builder().token(jwtService.generateToken(user1)).role(user1.getRole()).id(user1.getId()).build();
     }
 }

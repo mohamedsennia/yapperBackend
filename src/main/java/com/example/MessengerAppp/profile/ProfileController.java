@@ -22,7 +22,7 @@ public class ProfileController {
         //System.out.println(SecurityContextHolder.getContext().getAuthentication().getCredentials());
     }
     @GetMapping("/{id}")
-    public ResponseEntity<ProfileDTO> getProfileById(@PathVariable int id){
+    public ResponseEntity<GetProfileDTO> getProfileById(@PathVariable int id){
         return new ResponseEntity<>(this.profileService.getProfileById(id), HttpStatus.OK);
     }
 }

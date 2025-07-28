@@ -26,4 +26,8 @@ public class GlobalExceptionHandler {
     public  ResponseEntity<String> NotFoundException(NotFoundException exception){
         return new ResponseEntity<>(exception.getMessage(),HttpStatus.NOT_FOUND);
     }
+    @ExceptionHandler(NotAuthorisedException.class)
+    public ResponseEntity<String> NotAuthorisedException(NotAuthorisedException exception){
+        return new ResponseEntity<>(exception.getMessage(),HttpStatus.FORBIDDEN);
+    }
 }

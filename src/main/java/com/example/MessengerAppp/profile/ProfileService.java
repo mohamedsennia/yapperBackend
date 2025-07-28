@@ -1,9 +1,7 @@
 package com.example.MessengerAppp.profile;
 
-import com.example.MessengerAppp.Mapper;
 import com.example.MessengerAppp.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -21,12 +19,10 @@ public class ProfileService {
     }
 
 
-    public ProfileDTO getProfileById(int id) {
-        Optional<Profile> profile=this.profileRepositoty.findById(id);
-        if(profile.isPresent() ){
-            return Mapper.toProfileDTO(profile.get());
-        }else {
-            throw new NotFoundException("Profile doesn't exist");
-        }
+    public GetProfileDTO getProfileById(int id) {
+      return   this.profileRepositoty.findById(id).map(ProfileMapper::toGetProfileDTO).orElseThrow(()->new NotFoundException("Profile not Found"));
+    }
+    public Profile getProfileObjectByUserEmail(String email){
+        return this.profileRepositoty.findByOwnerEmail(email).orElseThrow(()-> new RuntimeException(""));
     }
 }

@@ -1,5 +1,6 @@
 package com.example.MessengerAppp.auth;
 
+import com.example.MessengerAppp.user.AddUserDTO;
 import com.example.MessengerAppp.user.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,8 +40,8 @@ private  final  AuthService authService;
 
         }
         @PostMapping("/signUp")
-        public ResponseEntity<CostumeResponse> signUp(@Valid @RequestBody User user){
-            System.out.println("Controller");
+        public ResponseEntity<CostumeResponse> signUp(@Valid @RequestBody AddUserDTO user){
+
                return new ResponseEntity<>(this.authService.signUp(user), HttpStatus.OK);
         }
 

@@ -1,9 +1,11 @@
 package com.example.MessengerAppp.user;
 
-import com.example.MessengerAppp.Mapper;
+import com.example.MessengerAppp.exception.NotFoundException;
 import com.example.MessengerAppp.message.MessageDTO;
 import com.example.MessengerAppp.message.MessageService;
+import com.example.MessengerAppp.profile.Profile;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,47 +21,60 @@ private MessageService messageService;
     this.userRepository=userRepository;
     this.messageService=messageService;
      }
-     public List<UserDTO> findByFirstnameOrLastnameContaining(String name, int excludedUserId){
-        return this.userRepository.findByFirstnameOrLastnameContaining(name,excludedUserId).stream().map(
+
+//     public List<GetUserDTO> findByIdNot(int id){
+//    return this.userRepository.findByIdNot(id).stream().map(user -> {
+//            UserDTO userDTO = Mapper.toUserDTO(user);
+//            List< MessageDTO> conversation=this.messageService.conversationBetween(id,user.getId());
+//            if(!conversation.isEmpty()){
+//                userDTO.setMessageDTO(conversation.getLast());
+//            }
+//        return userDTO;
+//    }).collect(Collectors.toList());
+//     }
+//     public List<GetUserDTO> findUsersInConversationWith(int id){
+//         return this.userRepository.findUsersInConversationWith(id).stream().map(user -> {
+//             UserDTO userDTO = Mapper.toUserDTO(user);
+//             List< MessageDTO> conversation=this.messageService.conversationBetween(id,user.getId());
+//             if(!conversation.isEmpty()){
+//                 userDTO.setMessageDTO(conversation.getLast());
+//             }
+//             return userDTO;
+//         }).collect(Collectors.toList());
+//     }
+     public GetUserDTO findUserById(int id){
+     return  this.userRepository.findById(id).map(UserMapper::toGetUserDTO).orElseThrow(
+             ()->   new  NotFoundException("User not found")
+     );
+
+     }
+         public List<GetUserDTO> findByFirstnameOrLastnameContaining(String name){
+        return this.userRepository.findByFirstnameOrLastnameContaining(name).stream().map(
                 user -> {
-                    UserDTO userDTO = Mapper.toUserDTO(user);
-                    List< MessageDTO> conversation=this.messageService.conversationBetween(excludedUserId,user.getId());
-                    if(conversation.size()>0){
-                        userDTO.setMessageDTO(conversation.getLast());
-                    }
-                    return userDTO;
+                    return  new GetUserDTO(user.getFirstName(), user.getLastName(), user.getProfile().getId());
                 }
         ).collect(Collectors.toList());
      }
-     public List<UserDTO> findByIdNot(int id){
-    return this.userRepository.findByIdNot(id).stream().map(user -> {
-            UserDTO userDTO = Mapper.toUserDTO(user);
-            List< MessageDTO> conversation=this.messageService.conversationBetween(id,user.getId());
-            if(!conversation.isEmpty()){
-                userDTO.setMessageDTO(conversation.getLast());
-            }
-        return userDTO;
-    }).collect(Collectors.toList());
-     }
-     public List<UserDTO> findUsersInConversationWith(int id){
-         return this.userRepository.findUsersInConversationWith(id).stream().map(user -> {
-             UserDTO userDTO = Mapper.toUserDTO(user);
-             List< MessageDTO> conversation=this.messageService.conversationBetween(id,user.getId());
-             if(!conversation.isEmpty()){
-                 userDTO.setMessageDTO(conversation.getLast());
-             }
-             return userDTO;
-         }).collect(Collectors.toList());
-     }
-     public UserDTO findUserById(int id){
-     Optional<User> user=this.userRepository.findById(id);
-     if(user.isPresent()){
-         UserDTO userDTO=Mapper.toUserDTO(user.get());
 
-         return userDTO;
-     }else {
-         return  null;
-     }
-     }
-
+    public void follow(int id) {
+        User currentUser=this.userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(()->new RuntimeException());
+        User secondUser=this.userRepository.findById(id).orElseThrow(()->new NotFoundException("User not found"));
+            currentUser.follows(secondUser);
+         this.userRepository.save(currentUser);
+    }
+    public void unfollows(int id){
+        User currentUser=this.userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(()->new RuntimeException());
+        User secondUser=this.userRepository.findById(id).orElseThrow(()->new NotFoundException("User not found"));
+        currentUser.unfollows(secondUser);
+        this.userRepository.save(currentUser);
+    }
+    public void removeFollower(int id){
+        User currentUser=this.userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(()->new RuntimeException());
+        User secondUser=this.userRepository.findById(id).orElseThrow(()->new NotFoundException("User not found"));
+        currentUser.removeFollower(secondUser);
+        this.userRepository.save(currentUser);
+    }
+    public User getUserObjectByUserEmail(String email){
+        return this.userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException(""));
+    }
 }

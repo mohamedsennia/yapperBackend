@@ -16,9 +16,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "_User")
@@ -42,12 +40,11 @@ public class User implements UserDetails {
             generator="User_sequence"
     )
     private int id;
-    @NotBlank(message = "First name is required")
+
     private String firstName;
-    @NotBlank(message = "Last name is required")
+
     private String lastName;
-    @Email(message = "Invalid Email Format")
-    @NotBlank(message = "Email is required")
+
     @Column(unique = true)
     private String email;
 
@@ -61,8 +58,22 @@ public class User implements UserDetails {
     private List<Message> messagesReceived;
     @OneToOne(mappedBy = "owner")
     private Profile profile;
-
-
+    @ManyToMany
+    @JoinTable(
+            name = "user_follows",
+            joinColumns = @JoinColumn(name = "follower_id"),
+            inverseJoinColumns = @JoinColumn(name = "followed_id")
+    )
+    private Set<User> following;
+    @ManyToMany(mappedBy = "following")
+    private Set<User> followers;
+    @ManyToMany
+    @JoinTable(
+            name="user_likes",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "post_id")
+    )
+    private Set<Post> likedPosts;
 
 
 
@@ -81,6 +92,8 @@ public class User implements UserDetails {
         this.role = role;
         this.messagesReceived=messagesReceived;
         this.messagesSent=messagesSent;
+        this.following=new HashSet<>();
+        this.followers=new HashSet<>();
     }
     public User(int id, String firstName, String lastName, String email, String password, Role role) {
 
@@ -93,18 +106,21 @@ public class User implements UserDetails {
         this.messagesReceived=new ArrayList<>();
         this.messagesSent=new ArrayList<>();
         this.profile=new Profile(this);
+        this.following=new HashSet<>();
+        this.followers=new HashSet<>();
     }
-    public User(String firstName, String lastName, String email, String password, Role role) {
-        System.out.println("hhh");
+    public User(String firstName, String lastName, String email, String password) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.role = role;
+        this.role = Role.User;
         this.messagesReceived=new ArrayList<>();
         this.messagesSent=new ArrayList<>();
-        this.profile=new Profile(this);
+        this.profile=null;
+        this.following=new HashSet<>();
+        this.followers=new HashSet<>();
     }
     public int getId() {
         return id;
@@ -201,4 +217,14 @@ public class User implements UserDetails {
     public void setPassword(String password) {
         this.password = password;
     }
+    public void follows(User user){
+        this.following.add(user);
+    }
+    public void unfollows(User user){
+        this.following.remove(user);
+    }
+    public void removeFollower(User user){
+        this.followers.remove(user);
+    }
+
 }

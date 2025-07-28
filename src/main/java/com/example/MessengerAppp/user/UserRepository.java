@@ -9,8 +9,8 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User,Integer> {
    Optional<User> findByEmail(String email);
-   @Query("SELECT u FROM User u WHERE (u.firstName LIKE %:name% OR u.lastName LIKE %:name%) AND u.id!=:excludedUserId")
-   List<User> findByFirstnameOrLastnameContaining(@Param("name") String name,@Param("excludedUserId") int excludedUserId);
+   @Query("SELECT u FROM User u WHERE (u.firstName LIKE %:name% OR u.lastName LIKE %:name%) ")
+   List<User> findByFirstnameOrLastnameContaining(@Param("name") String name);
    List<User> findByIdNot(int id);
    @Query("SELECT u FROM User u " +
            "JOIN Message m ON (m.sender.id = u.id OR m.recipient.id = u.id) " +
@@ -19,4 +19,5 @@ public interface UserRepository extends JpaRepository<User,Integer> {
            "GROUP BY u.id " +
            "ORDER BY MAX(m.time) DESC")
    List<User> findUsersInConversationWith(@Param("userId") int userId);
+;
 }
