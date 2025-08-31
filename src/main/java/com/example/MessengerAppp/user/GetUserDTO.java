@@ -14,10 +14,10 @@ public class GetUserDTO {
     private String firstName;
     private String lastName;
     private int profile;
+    private String email;
+    private int subscribers;
+    private int subscribtions;
+    private boolean isFollowed;
+    private boolean isMe;
 
-    public GetUserDTO(String firstName, String lastName, int profile) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.profile = profile;
-    }
 }

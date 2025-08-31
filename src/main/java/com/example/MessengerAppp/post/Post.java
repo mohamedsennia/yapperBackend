@@ -43,8 +43,13 @@ public class Post {
     private Post parent;
     @OneToMany(mappedBy = "parent")
     private List<Post> replies;
-    @ManyToMany(mappedBy = "likedPosts")
-    private Set<User> likes;
+    @ManyToMany
+    @JoinTable(
+            name="profile_likes",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "profile_id")
+    )
+    private Set<Profile> likes;
     public Post(String content,PostType postType){
         this.content=content;
         this.date=new Date();
@@ -56,11 +61,12 @@ public class Post {
         this.id=id;
         this.content=content;
     }
-    public void toggleLiked(User user){
-        if(likes.contains(user)){
-            this.likes.remove(user);
+    public void toggleLiked(Profile profile){
+
+        if(likes.contains(profile)){
+            this.likes.remove(profile);
         }else{
-            this.likes.add(user);
+            this.likes.add(profile);
         }
     }
 

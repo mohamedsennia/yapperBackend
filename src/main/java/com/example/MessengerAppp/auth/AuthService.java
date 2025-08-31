@@ -37,7 +37,7 @@ public class AuthService {
                 )
         );
         User user=this.userRepository.findByEmail(logInRequest.getUserEmail()).orElseThrow(()->new UsernameNotFoundException("user not found")) ;
-        return CostumeResponse.builder().token(jwtService.generateToken(user)).role(user.getRole()).id(user.getId()).build();
+        return CostumeResponse.builder().token(jwtService.generateToken(user)).role(user.getRole()).id(user.getId()).userName(user.getLastName()+" "+user.getFirstName()).build();
     }
     public CostumeResponse signUp(AddUserDTO user){
 
@@ -46,7 +46,7 @@ public class AuthService {
             throw new AlreadyExistsException("Email already exists");
         }
         User user1= UserMapper.getUser(user);
-        user1.follows(user1);
+
         userRepository.save(user1);
         user1.setProfile(new Profile(user1));
         this.profileService.add(user1.getProfile());

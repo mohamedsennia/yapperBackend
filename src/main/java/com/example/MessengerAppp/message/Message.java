@@ -29,11 +29,11 @@ public class Message {
     String content;
     Date time;
 
-    @ManyToOne
-    @JoinColumn(name = "senderId")
-    User sender;
-    @ManyToOne
-    @JoinColumn(name = "recipientId")
-    User recipient;
+//    @ManyToOne
+//    @JoinColumn(name = "senderId")
+//    User sender;
+//    @ManyToOne
+//    @JoinColumn(name = "recipientId")
+//    User recipient;
 
 }

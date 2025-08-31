@@ -51,29 +51,8 @@ public class User implements UserDetails {
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
-    @OneToMany( mappedBy = "sender")
-
-    private List<Message> messagesSent;
-    @OneToMany(mappedBy = "recipient")
-    private List<Message> messagesReceived;
     @OneToOne(mappedBy = "owner")
     private Profile profile;
-    @ManyToMany
-    @JoinTable(
-            name = "user_follows",
-            joinColumns = @JoinColumn(name = "follower_id"),
-            inverseJoinColumns = @JoinColumn(name = "followed_id")
-    )
-    private Set<User> following;
-    @ManyToMany(mappedBy = "following")
-    private Set<User> followers;
-    @ManyToMany
-    @JoinTable(
-            name="user_likes",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "post_id")
-    )
-    private Set<Post> likedPosts;
 
 
 
@@ -90,10 +69,7 @@ public class User implements UserDetails {
         this.email = email;
         this.password = password;
         this.role = role;
-        this.messagesReceived=messagesReceived;
-        this.messagesSent=messagesSent;
-        this.following=new HashSet<>();
-        this.followers=new HashSet<>();
+
     }
     public User(int id, String firstName, String lastName, String email, String password, Role role) {
 
@@ -103,11 +79,7 @@ public class User implements UserDetails {
         this.email = email;
         this.password = password;
         this.role = role;
-        this.messagesReceived=new ArrayList<>();
-        this.messagesSent=new ArrayList<>();
-        this.profile=new Profile(this);
-        this.following=new HashSet<>();
-        this.followers=new HashSet<>();
+
     }
     public User(String firstName, String lastName, String email, String password) {
         this.id = id;
@@ -116,11 +88,7 @@ public class User implements UserDetails {
         this.email = email;
         this.password = password;
         this.role = Role.User;
-        this.messagesReceived=new ArrayList<>();
-        this.messagesSent=new ArrayList<>();
-        this.profile=null;
-        this.following=new HashSet<>();
-        this.followers=new HashSet<>();
+
     }
     public int getId() {
         return id;
@@ -162,29 +130,6 @@ public class User implements UserDetails {
         this.role = role;
     }
 
-    public List<Message> getMessagesSent() {
-        return messagesSent;
-    }
-
-    public void setMessagesSent(List<Message> messagesSent) {
-        this.messagesSent = messagesSent;
-    }
-
-    public List<Message> getMessagesReceived() {
-        return messagesReceived;
-    }
-
-    public void setMessagesReceived(List<Message> messagesReceived) {
-        this.messagesReceived = messagesReceived;
-    }
-
-    public Profile getProfile() {
-        return profile;
-    }
-
-    public void setProfile(Profile profile) {
-        this.profile = profile;
-    }
     public String getPassword() {
         return password;
     }
@@ -217,14 +162,12 @@ public class User implements UserDetails {
     public void setPassword(String password) {
         this.password = password;
     }
-    public void follows(User user){
-        this.following.add(user);
-    }
-    public void unfollows(User user){
-        this.following.remove(user);
-    }
-    public void removeFollower(User user){
-        this.followers.remove(user);
+
+    public Profile getProfile() {
+        return profile;
     }
 
+    public void setProfile(Profile profile) {
+        this.profile = profile;
+    }
 }

@@ -12,4 +12,5 @@ public class GetProfileDTO {
     private String ownerFirstName;
     private String ownerLastName;
     private int ownerId;
+
 }

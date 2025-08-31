@@ -4,10 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/profile")
@@ -24,5 +21,13 @@ public class ProfileController {
     @GetMapping("/{id}")
     public ResponseEntity<GetProfileDTO> getProfileById(@PathVariable int id){
         return new ResponseEntity<>(this.profileService.getProfileById(id), HttpStatus.OK);
+    }
+    @PutMapping("/toggleFollow/{myId}/{id}")
+    public void toggleFollow(@PathVariable(name="myId") int myId,@PathVariable(name = "id") int id){
+        this.profileService.toggleFollow(myId,id);
+    }
+    @PutMapping("/removeFollower/{myId}/{id}")
+    public void removeFollower(@PathVariable(name="myId") int myId,@PathVariable int id){
+        this.profileService.removeFollower(myId,id);
     }
 }

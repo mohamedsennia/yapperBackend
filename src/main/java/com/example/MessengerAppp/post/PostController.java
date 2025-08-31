@@ -25,13 +25,18 @@ public class PostController {
         return  postService.getPostByProfileId(profileId,page);
     }
     @PostMapping()
-    public void post(@RequestBody AddPostDTO addPostDTO){
+    public GetPostDTO post(@RequestBody AddPostDTO addPostDTO){
 
-        this.postService.post(addPostDTO);
+       return this.postService.post(addPostDTO);
     }
     @GetMapping("/feed/{page}")
     public Page<GetPostDTO> getFeed(@PathVariable int page){
         return this.postService.getFeed(page);
+    }
+    @GetMapping("/comments/{parentId}/{page}")
+    public Page<GetPostDTO> getComments(@PathVariable(name = "parentId") int parentId,@PathVariable(name = "page") int page){
+
+        return this.postService.getComments(parentId,page);
     }
     @PatchMapping()
     public void editPost(@RequestBody EditPostDTO editPostDTO){

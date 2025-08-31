@@ -43,38 +43,29 @@ private MessageService messageService;
 //         }).collect(Collectors.toList());
 //     }
      public GetUserDTO findUserById(int id){
-     return  this.userRepository.findById(id).map(UserMapper::toGetUserDTO).orElseThrow(
+     return  this.userRepository.findById(id).map(user -> {
+           GetUserDTO userDTO=UserMapper.toGetUserDTO(user);
+
+           User currentUser=this.userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get();
+           userDTO.setFollowed(currentUser.getProfile().getFollowing().contains(user.getProfile()));
+           userDTO.setMe(currentUser.getId()==userDTO.getId());
+         System.out.println(userDTO);
+           return  userDTO;
+     }).orElseThrow(
              ()->   new  NotFoundException("User not found")
      );
 
      }
          public List<GetUserDTO> findByFirstnameOrLastnameContaining(String name){
+            
         return this.userRepository.findByFirstnameOrLastnameContaining(name).stream().map(
-                user -> {
-                    return  new GetUserDTO(user.getFirstName(), user.getLastName(), user.getProfile().getId());
-                }
+                UserMapper::toGetUserDTO
         ).collect(Collectors.toList());
-     }
 
-    public void follow(int id) {
-        User currentUser=this.userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(()->new RuntimeException());
-        User secondUser=this.userRepository.findById(id).orElseThrow(()->new NotFoundException("User not found"));
-            currentUser.follows(secondUser);
-         this.userRepository.save(currentUser);
-    }
-    public void unfollows(int id){
-        User currentUser=this.userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(()->new RuntimeException());
-        User secondUser=this.userRepository.findById(id).orElseThrow(()->new NotFoundException("User not found"));
-        currentUser.unfollows(secondUser);
-        this.userRepository.save(currentUser);
-    }
-    public void removeFollower(int id){
-        User currentUser=this.userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(()->new RuntimeException());
-        User secondUser=this.userRepository.findById(id).orElseThrow(()->new NotFoundException("User not found"));
-        currentUser.removeFollower(secondUser);
-        this.userRepository.save(currentUser);
-    }
+     }
     public User getUserObjectByUserEmail(String email){
         return this.userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException(""));
     }
+
+
 }

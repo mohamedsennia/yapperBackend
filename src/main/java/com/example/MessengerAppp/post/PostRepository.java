@@ -11,7 +11,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface PostRepository  extends JpaRepository<Post,Integer> {
-    Page<Post> findByProfileId(int id,Pageable pageable);
-    @Query("SELECT p FROM Post p where p.profile.owner.id IN( SELECT f.id From User u JOIN u.following f where u.email= :email)")
+    Page<Post> findByProfileIdAndType(int id,PostType postType,Pageable pageable);
+    @Query("SELECT p FROM Post p where p.profile.id IN( SELECT f.id From Profile u JOIN u.following f where u.email= :email) And p.type='Post'")
     Page<Post> getFeed(@Param("email") String email, Pageable pageable);
+    Page<Post> findByTypeAndParentId(PostType postType,int parentId,Pageable pageable);
 }

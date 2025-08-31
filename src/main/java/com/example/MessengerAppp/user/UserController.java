@@ -28,22 +28,13 @@ public class UserController {
 //    }
     @GetMapping("/search/{name}")
     public ResponseEntity<List<GetUserDTO> > searchUser(@PathVariable(name = "name") String name){
+        System.out.println((this.userService.findByFirstnameOrLastnameContaining(name)));
         return new ResponseEntity<>(this.userService.findByFirstnameOrLastnameContaining(name),HttpStatus.OK);
     }
     @GetMapping("/{id}")
     public ResponseEntity<GetUserDTO> findUserById(@PathVariable int id){
         return new ResponseEntity<>(this.userService.findUserById(id), HttpStatus.OK);
     }
-    @PutMapping("/follow/{id}")
-    public void follow(@PathVariable int id){
-        this.userService.follow(id);
-    }
-    @PutMapping("/unfollow/{id}")
-    public void unfollow(@PathVariable int id){
-        this.userService.unfollows(id);
-    }
-    @PutMapping("/removeFollower/{id}")
-    public void removeFollower(@PathVariable int id){
-        this.userService.removeFollower(id);
-    }
+
+
 }

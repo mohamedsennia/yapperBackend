@@ -3,6 +3,7 @@ package com.example.MessengerAppp.post;
 import com.example.MessengerAppp.exception.NotAuthorisedException;
 import com.example.MessengerAppp.exception.NotFoundException;
 import com.example.MessengerAppp.profile.ProfileService;
+import com.example.MessengerAppp.user.User;
 import com.example.MessengerAppp.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,7 +25,8 @@ public class PostService {
     private PostRepository postRepository;
     private ProfileService profileService;
     private UserService userService;
-    private final int pageSize=10;
+    private final int postPageSize=10;
+    private final int commentPageSize=4;
     @Autowired
     public PostService(PostRepository postRepository,ProfileService profileService,UserService userService){
         this.postRepository=postRepository;
@@ -36,25 +39,33 @@ public class PostService {
                 .orElseThrow(() -> new NotFoundException("There's no post with this id"));
     }
     public Page<GetPostDTO> getPostByProfileId(int profileId,int pageNumber){
-        Pageable pageable =  PageRequest.of(pageNumber,this.pageSize);
+        Pageable pageable =  PageRequest.of(pageNumber,this.postPageSize);
 
-        return this.toDtoPages(this.postRepository.findByProfileId(profileId,pageable),pageable);
+        return this.toDtoPages(this.postRepository.findByProfileIdAndType(profileId,PostType.Post,pageable),pageable);
     }
-    public void post(AddPostDTO postDTO){
+    public GetPostDTO post(AddPostDTO postDTO){
 
 
         Post post=PostMapper.toPost(postDTO);
         Optional<Post> parent=this.postRepository.findById(postDTO.getParent());
         parent.ifPresent(post::setParent);
         post.setProfile(profileService.getProfileObjectByUserEmail(SecurityContextHolder.getContext().getAuthentication().getName()));
-
-        this.postRepository.save(post);
+        post.setLikes(new HashSet<>());
+        
+       return PostMapper.toGetPostDTO(this.postRepository.save(post));
     }
     public Page<GetPostDTO> getFeed(int pageNumber){
-        Pageable pageable =  PageRequest.of(pageNumber,this.pageSize);
+        Pageable pageable =  PageRequest.of(pageNumber,this.postPageSize);
         Page<Post> page=this.postRepository.getFeed(SecurityContextHolder.getContext().getAuthentication().getName(),pageable);
 
        return this.toDtoPages(page,pageable);
+
+    }
+    public Page<GetPostDTO> getComments(int postId,int pageNumber){
+        Pageable pageable =  PageRequest.of(pageNumber,this.commentPageSize);
+        Page<Post> page=this.postRepository.findByTypeAndParentId(PostType.Reply,postId,pageable);
+
+        return this.toDtoPages(page,pageable);
 
     }
     public void deletePost(int postId){
@@ -75,14 +86,23 @@ public class PostService {
         }
     }
     public void toggleLike(int postId){
+
         Post post=postRepository.findById(postId).orElseThrow(()->new NotFoundException("There's no post with this id"));
-        post.toggleLiked(this.userService.getUserObjectByUserEmail(SecurityContextHolder.getContext().getAuthentication().getName()));
+        post.toggleLiked(this.userService.getUserObjectByUserEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getProfile());
+
         this.postRepository.save(post);
+
+
     }
     private Page<GetPostDTO> toDtoPages(Page<Post> page,Pageable pageable){
 
         return new PageImpl<GetPostDTO>(
-                page.getContent().stream().map(PostMapper::toGetPostDTO).collect(Collectors.toList())
+                page.getContent().stream().map(post -> {
+                    GetPostDTO postDTO=PostMapper.toGetPostDTO(post);
+                    User user=this.userService.getUserObjectByUserEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+                    postDTO.setLiked(post.getLikes().contains(user));
+                    return postDTO;
+                }).collect(Collectors.toList())
                 ,pageable
                 ,page.getTotalElements()
         );

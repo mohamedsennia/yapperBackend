@@ -17,4 +17,6 @@ private Date date;
 private PostType type;
 private GetProfileDTO profile;
 private int commentsCount;
+private int likesCount;
+private boolean liked;
 }

@@ -14,5 +14,5 @@ public class CostumeResponse {
     private String token;
     private Role role;
     private int id;
-
+    private String userName;
 }

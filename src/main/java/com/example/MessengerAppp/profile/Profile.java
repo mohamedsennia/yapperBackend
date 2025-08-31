@@ -1,14 +1,16 @@
 package com.example.MessengerAppp.profile;
 
+import com.example.MessengerAppp.message.Message;
 import com.example.MessengerAppp.post.Post;
 import com.example.MessengerAppp.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
-@Data
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -29,7 +31,34 @@ public class Profile {
     @OneToOne
     @JoinColumn(name = "owner")
     private User owner;
+//    @OneToMany( mappedBy = "sender")
+//
+//    private List<Message> messagesSent;
+//    @OneToMany(mappedBy = "recipient")
+//    private List<Message> messagesReceived;
+
+
+    @ManyToMany
+    @JoinTable(
+            name = "profile_follows",
+            joinColumns = @JoinColumn(name = "follower_id"),
+            inverseJoinColumns = @JoinColumn(name = "followed_id")
+    )
+    private Set<Profile> following;
+    @ManyToMany(mappedBy = "following")
+    private Set<Profile> followers;
+    @ManyToMany(mappedBy = "likes")
+    private Set<Post> likedPosts;
     public Profile(User owner){
         this.owner=owner;
+    }
+    public void follows(Profile profile){
+        this.following.add(profile);
+    }
+    public void unfollows(Profile profile){
+        this.following.remove(profile);
+    }
+    public void removeFollower(Profile profile){
+        this.followers.remove(profile);
     }
 }
