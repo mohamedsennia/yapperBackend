@@ -56,7 +56,7 @@ public class PostService {
     }
     public Page<GetPostDTO> getFeed(int pageNumber){
         Pageable pageable =  PageRequest.of(pageNumber,this.postPageSize);
-        Page<Post> page=this.postRepository.getFeed(SecurityContextHolder.getContext().getAuthentication().getName(),pageable);
+        Page<Post> page=this.postRepository.getFeed(userService.getUserObjectByUserEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getProfile().getId(),pageable);
 
        return this.toDtoPages(page,pageable);
 

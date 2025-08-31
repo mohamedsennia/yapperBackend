@@ -12,7 +12,16 @@ import java.util.List;
 
 public interface PostRepository  extends JpaRepository<Post,Integer> {
     Page<Post> findByProfileIdAndType(int id,PostType postType,Pageable pageable);
-    @Query("SELECT p FROM Post p where p.profile.id IN( SELECT f.id From Profile u JOIN u.following f where u.email= :email) And p.type='Post'")
-    Page<Post> getFeed(@Param("email") String email, Pageable pageable);
+    @Query("""
+    SELECT p 
+    FROM Post p
+    WHERE p.profile.id IN (
+        SELECT f.id 
+        FROM Profile pr 
+        JOIN pr.following f 
+        WHERE pr.id = :profileId
+    )
+    AND p.type = 'Post'
+""")    Page<Post> getFeed(@Param("profileId") int profileId, Pageable pageable);
     Page<Post> findByTypeAndParentId(PostType postType,int parentId,Pageable pageable);
 }
