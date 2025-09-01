@@ -1,5 +1,7 @@
 package com.example.MessengerAppp.message;
 
+import com.example.MessengerAppp.converstation.Conversation;
+import com.example.MessengerAppp.profile.Profile;
 import com.example.MessengerAppp.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -29,11 +31,11 @@ public class Message {
     String content;
     Date time;
 
-//    @ManyToOne
-//    @JoinColumn(name = "senderId")
-//    User sender;
-//    @ManyToOne
-//    @JoinColumn(name = "recipientId")
-//    User recipient;
+    @ManyToOne
+    @JoinColumn(name = "senderId")
+    Profile sender;
+    @ManyToOne
+    @JoinColumn(name = "conversationId")
+    Conversation conversation;
 
 }

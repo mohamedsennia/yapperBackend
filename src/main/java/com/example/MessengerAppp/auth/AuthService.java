@@ -37,7 +37,7 @@ public class AuthService {
                 )
         );
         User user=this.userRepository.findByEmail(logInRequest.getUserEmail()).orElseThrow(()->new UsernameNotFoundException("user not found")) ;
-        return CostumeResponse.builder().token(jwtService.generateToken(user)).role(user.getRole()).id(user.getId()).userName(user.getLastName()+" "+user.getFirstName()).build();
+        return CostumeResponse.builder().token(jwtService.generateToken(user)).role(user.getRole()).id(user.getId()).userName(user.getLastName()+" "+user.getFirstName()).profileId(user.getProfile().getId()).build();
     }
     public CostumeResponse signUp(AddUserDTO user){
 
@@ -50,6 +50,6 @@ public class AuthService {
         userRepository.save(user1);
         user1.setProfile(new Profile(user1));
         this.profileService.add(user1.getProfile());
-        return CostumeResponse.builder().token(jwtService.generateToken(user1)).role(user1.getRole()).id(user1.getId()).build();
+        return CostumeResponse.builder().token(jwtService.generateToken(user1)).role(user1.getRole()).id(user1.getId()).userName(user1.getLastName()+" "+user1.getFirstName()).profileId(user1.getProfile().getId()).build();
     }
 }

@@ -15,4 +15,5 @@ public class CostumeResponse {
     private Role role;
     private int id;
     private String userName;
+    private int profileId;
 }
