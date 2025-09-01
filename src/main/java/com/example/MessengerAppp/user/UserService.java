@@ -1,15 +1,12 @@
 package com.example.MessengerAppp.user;
 
 import com.example.MessengerAppp.exception.NotFoundException;
-import com.example.MessengerAppp.message.MessageDTO;
 import com.example.MessengerAppp.message.MessageService;
-import com.example.MessengerAppp.profile.Profile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
