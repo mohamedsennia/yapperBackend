@@ -1,5 +1,8 @@
 package com.example.MessengerAppp.message;
 
+
+import com.example.MessengerAppp.converstation.ConversationService;
+import com.example.MessengerAppp.profile.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,30 +12,24 @@ import java.util.stream.Collectors;
 @Service
 public class MessageService {
 private MessagerRpository messagerRpository;
-//@Autowired
-//    public MessageService(MessagerRpository messagerRpository){
-//        this.messagerRpository=messagerRpository;
-//    }
+private ProfileService profileService;
+private ConversationService conversationService;
+@Autowired
+    public MessageService(MessagerRpository messagerRpository,ProfileService profileService,ConversationService conversationService){
+        this.messagerRpository=messagerRpository;
+    }
 //    public Message save(Message message){
 //     return   this.messagerRpository.save(message);
 //    }
-//    public Message findById(int id){
-//        return this.messagerRpository.findById(id).orElse(null);
-//    }
-//    public List<Message> findBySenderId(int senderId){
-//        return this.messagerRpository.findBySenderId(senderId);
-//    }
-//    public List<Message> findByRecipientId(int recipientId){
-//            return this.messagerRpository.findByRecipientId(recipientId);
-//    }
-//    public List<MessageDTO> conversationBetween(int user1,int user2){
-//   return this.messagerRpository.conversationBetween(user1,user2).stream().map(message -> {
-//        return Mapper.toMessageDTO(message);
-//    }).collect(Collectors.toList());
-//    }
-//    public List<Message> findMessageWhereUserInvolved(int userId){
-//        return  this.messagerRpository.findMessageWhereUserInvolved(userId);
-//    }
+    public void addMessage(AddMessageDTO addMessageDTO){
+        //MessageMapper.
+        Message message=MessageMapper.toMessage(addMessageDTO);
+        message.setSender(profileService.getProfileSubjectById(addMessageDTO.getProfileId()));
+        message.setConversation(conversationService.getConversationObjectById(addMessageDTO.getConversationId()));
+        this.messagerRpository.save(message);
+    }
+
+
 
 
 }

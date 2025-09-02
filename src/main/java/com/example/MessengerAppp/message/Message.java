@@ -38,4 +38,9 @@ public class Message {
     @JoinColumn(name = "conversationId")
     Conversation conversation;
 
+    public Message(String content, Date time) {
+        this.content = content;
+        this.time = time;
+
+    }
 }

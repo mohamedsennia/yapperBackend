@@ -15,9 +15,6 @@ public class GetUserDTO {
     private String lastName;
     private int profile;
     private String email;
-    private int subscribers;
-    private int subscribtions;
-    private boolean isFollowed;
-    private boolean isMe;
+
 
 }

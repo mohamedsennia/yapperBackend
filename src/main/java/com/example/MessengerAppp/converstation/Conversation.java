@@ -29,4 +29,6 @@ public class Conversation {
             inverseJoinColumns = @JoinColumn(name = "profile_id")
     )
     private Set<Profile> participants;
+    @Enumerated
+    private ConversationType type;
 }

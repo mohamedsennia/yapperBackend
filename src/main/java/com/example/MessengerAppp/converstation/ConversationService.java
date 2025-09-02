@@ -1,6 +1,7 @@
 package com.example.MessengerAppp.converstation;
 
 import com.example.MessengerAppp.exception.NotAuthorisedException;
+import com.example.MessengerAppp.exception.NotFoundException;
 import com.example.MessengerAppp.post.GetPostDTO;
 import com.example.MessengerAppp.post.Post;
 import com.example.MessengerAppp.post.PostMapper;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +35,13 @@ public class ConversationService {
         }
         Pageable pageable =  PageRequest.of(pageNumber,this.conversationPageSize);
         return toDtoPages(this.conversationRepository.findAllByProfileId(profileId,pageable),pageable);
+    }
+    public Conversation getConversationObjectById(int id){
+       return this.conversationRepository.findById(id).orElseThrow(()-> new NotFoundException("conversation Not found"));
+    }
+    public int getConversationBetween(int profileId1,int profileId2){
+        Optional<Conversation> conversationBetweenProfiles = this.conversationRepository.findConversationBetweenProfiles(profileId1, profileId2);
+        return conversationBetweenProfiles.map(Conversation::getId).orElse(-1);
     }
     private Page<GetConversationDTO> toDtoPages(Page<Conversation> page, Pageable pageable){
 

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AddMessageDTO {
     private int profileId;
-    private String message;
+    private String content;
     private int ConversationId;
 
 }

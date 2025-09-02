@@ -12,11 +12,11 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
 private  UserRepository userRepository;
-private MessageService messageService;
+
 @Autowired
-    public UserService(UserRepository userRepository, MessageService messageService){
+    public UserService(UserRepository userRepository){
     this.userRepository=userRepository;
-    this.messageService=messageService;
+
      }
 
 //     public List<GetUserDTO> findByIdNot(int id){
@@ -40,15 +40,7 @@ private MessageService messageService;
 //         }).collect(Collectors.toList());
 //     }
      public GetUserDTO findUserById(int id){
-     return  this.userRepository.findById(id).map(user -> {
-           GetUserDTO userDTO=UserMapper.toGetUserDTO(user);
-
-           User currentUser=this.userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get();
-           userDTO.setFollowed(currentUser.getProfile().getFollowing().contains(user.getProfile()));
-           userDTO.setMe(currentUser.getId()==userDTO.getId());
-         System.out.println(userDTO);
-           return  userDTO;
-     }).orElseThrow(
+     return  this.userRepository.findById(id).map(UserMapper::toGetUserDTO).orElseThrow(
              ()->   new  NotFoundException("User not found")
      );
 

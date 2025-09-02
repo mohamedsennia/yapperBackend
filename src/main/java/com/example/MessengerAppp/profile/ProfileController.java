@@ -18,9 +18,9 @@ public class ProfileController {
     public void getProfiles(){
         //System.out.println(SecurityContextHolder.getContext().getAuthentication().getCredentials());
     }
-    @GetMapping("/{id}")
-    public ResponseEntity<GetProfileDTO> getProfileById(@PathVariable int id){
-        return new ResponseEntity<>(this.profileService.getProfileById(id), HttpStatus.OK);
+    @GetMapping("/{myProfile}/{id}")
+    public ResponseEntity<GetProfileDTO> getProfileById(@PathVariable(name = "myProfile") int myProfile,@PathVariable(name = "id") int id){
+        return new ResponseEntity<>(this.profileService.getProfileById(myProfile,id), HttpStatus.OK);
     }
     @PutMapping("/toggleFollow/{myId}/{id}")
     public void toggleFollow(@PathVariable(name="myId") int myId,@PathVariable(name = "id") int id){

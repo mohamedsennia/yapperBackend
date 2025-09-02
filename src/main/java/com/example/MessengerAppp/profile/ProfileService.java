@@ -1,5 +1,6 @@
 package com.example.MessengerAppp.profile;
 
+import com.example.MessengerAppp.converstation.ConversationService;
 import com.example.MessengerAppp.exception.NotAuthorisedException;
 import com.example.MessengerAppp.exception.NotFoundException;
 import com.example.MessengerAppp.user.User;
@@ -13,7 +14,7 @@ import java.util.Optional;
 @Service
 public class ProfileService {
     private ProfileRepositoty profileRepositoty;
-    private UserRepository userRepository;
+    private ConversationService conversationService;
     @Autowired
     public ProfileService(ProfileRepositoty profileRepositoty){
         this.profileRepositoty=profileRepositoty;
@@ -24,8 +25,18 @@ public class ProfileService {
     }
 
 
-    public GetProfileDTO getProfileById(int id) {
-      return   this.profileRepositoty.findById(id).map(ProfileMapper::toGetProfileDTO).orElseThrow(()->new NotFoundException("Profile not Found"));
+    public GetProfileDTO getProfileById(int profileId,int id) {
+      return   this.profileRepositoty.findById(id).map(profile -> {
+          GetProfileDTO profileDTO=ProfileMapper.toGetProfileDTO(profile);
+          Profile currentUserProfil=this.profileRepositoty.findById(profileId).orElseThrow(()->new NotFoundException("profile not valid"));
+          if(!currentUserProfil.getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
+              throw  new NotAuthorisedException("You are no authorised");
+          }
+          profileDTO.setFollowed(currentUserProfil.getFollowing().contains(this.profileRepositoty.findById(id).orElseThrow(()->new NotFoundException("Profile Not Found"))));
+          profileDTO.setMe(currentUserProfil.getId()==id);
+          profileDTO.setConversationId(this.conversationService.getConversationBetween(currentUserProfil.getId(),id));
+          return profileDTO;
+      }).orElseThrow(()->new NotFoundException("Profile not Found"));
     }
     public Profile getProfileObjectByUserEmail(String email){
         return this.profileRepositoty.findByOwnerEmail(email).orElseThrow(()-> new RuntimeException(""));
@@ -41,38 +52,33 @@ public class ProfileService {
         this.profileRepositoty.save(currentUserProfile);
     }
     public void removeFollower(int profileId,int id){
+
         Profile currentUserProfil=this.profileRepositoty.findById(profileId).orElseThrow(()->new NotFoundException("profile not valid"));
-        if(currentUserProfil.getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
-            Profile secondUserProfile=this.profileRepositoty.findById(id).orElseThrow(()->new NotFoundException("User not found"));
-            currentUserProfil.removeFollower(secondUserProfile);
-        }else {
+        if(!currentUserProfil.getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
             throw  new NotAuthorisedException("You are no authorised");
         }
+        Profile secondUserProfile=this.profileRepositoty.findById(id).orElseThrow(()->new NotFoundException("User not found"));
+        currentUserProfil.removeFollower(secondUserProfile);
+    }
 
-    }
-    public User getUserObjectByUserEmail(String email){
-        return this.userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException(""));
-    }
 
     public void toggleFollow(int profileId,int id) {
         Profile currentUserProfil=this.profileRepositoty.findById(profileId).orElseThrow(()->new NotFoundException("profile not valid"));
-        if(currentUserProfil.getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
-            Profile secondUserProfile=this.profileRepositoty.findById(id).orElseThrow(()->new NotFoundException("User not found"));
-           if(currentUserProfil.getFollowing().contains(secondUserProfile)){
-               this.unfollows(currentUserProfil,secondUserProfile);
-               return;
-           }
-           this.follow(currentUserProfil,secondUserProfile);
-        }else {
+        if(!currentUserProfil.getOwner().getEmail().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
+
+
             throw  new NotAuthorisedException("You are no authorised");
         }
-//        User currentUser=this.userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(()->new RuntimeException());
-//        User secondUser=this.userRepository.findById(id).orElseThrow(()->new NotFoundException("User not found"));
-//        if(currentUser.getFollowing().contains(secondUser)){
-//            this.unfollows(currentUser,secondUser);
-//            return;
-//        }
-//        this.follow(currentUser,secondUser);
+        Profile secondUserProfile=this.profileRepositoty.findById(id).orElseThrow(()->new NotFoundException("User not found"));
+        if(currentUserProfil.getFollowing().contains(secondUserProfile)){
+            this.unfollows(currentUserProfil,secondUserProfile);
+            return;
+        }
+        this.follow(currentUserProfil,secondUserProfile);
 
     }
+    public Profile getProfileSubjectById(int id){
+        return this.profileRepositoty.findById(id).orElseThrow(()->new NotFoundException("Profile not found"));
+    }
+
 }

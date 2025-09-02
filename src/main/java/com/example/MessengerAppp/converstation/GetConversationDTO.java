@@ -11,4 +11,5 @@ import lombok.NoArgsConstructor;
 public class GetConversationDTO {
     private int id;
     private GetMessageDTO lastMessage;
+    private ConversationType conversationType;
 }

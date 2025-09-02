@@ -4,6 +4,6 @@ import com.example.MessengerAppp.message.MessageMapper;
 
 public class ConversationMapper {
     public static GetConversationDTO toConversationDTO(Conversation conversation){
-        return  new GetConversationDTO(conversation.getId(), MessageMapper.toMessageDTO(conversation.getMessages().getLast()));
+        return  new GetConversationDTO(conversation.getId(), MessageMapper.toMessageDTO(conversation.getMessages().getLast()),conversation.getType());
     }
 }
