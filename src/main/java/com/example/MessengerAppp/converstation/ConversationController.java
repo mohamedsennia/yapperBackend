@@ -17,8 +17,8 @@ public class ConversationController {
     public ConversationController(ConversationService conversationService){
         this.conversationService=conversationService;
     }
-    @GetMapping("/{profileId}/{page}")
-    public ResponseEntity<Page<GetConversationDTO>> getConversationsByProfile(@PathVariable(name = "profileId")int profileId,@PathVariable(name = "page") int page){
-        return new ResponseEntity<Page<GetConversationDTO>>(this.conversationService.getConversations(profileId,page), HttpStatus.OK);
+    @GetMapping("/{page}")
+    public ResponseEntity<Page<GetConversationDTO>> getConversationsByProfile(@PathVariable(name = "page") int page){
+        return new ResponseEntity<Page<GetConversationDTO>>(this.conversationService.getConversations(page), HttpStatus.OK);
     }
 }

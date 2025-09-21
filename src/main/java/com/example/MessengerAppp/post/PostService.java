@@ -25,7 +25,7 @@ public class PostService {
     private PostRepository postRepository;
     private ProfileService profileService;
     private UserService userService;
-    private final int postPageSize=10;
+    private final int postPageSize=5;
     private final int commentPageSize=4;
     @Autowired
     public PostService(PostRepository postRepository,ProfileService profileService,UserService userService){
@@ -100,7 +100,7 @@ public class PostService {
                 page.getContent().stream().map(post -> {
                     GetPostDTO postDTO=PostMapper.toGetPostDTO(post);
                     User user=this.userService.getUserObjectByUserEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-                    postDTO.setLiked(post.getLikes().contains(user));
+                    postDTO.setLiked(post.getLikes().contains(user.getProfile()));
                     return postDTO;
                 }).collect(Collectors.toList())
                 ,pageable

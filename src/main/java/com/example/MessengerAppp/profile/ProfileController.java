@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/profile")
 public class ProfileController {
@@ -18,16 +20,21 @@ public class ProfileController {
     public void getProfiles(){
         //System.out.println(SecurityContextHolder.getContext().getAuthentication().getCredentials());
     }
-    @GetMapping("/{myProfile}/{id}")
-    public ResponseEntity<GetProfileDTO> getProfileById(@PathVariable(name = "myProfile") int myProfile,@PathVariable(name = "id") int id){
-        return new ResponseEntity<>(this.profileService.getProfileById(myProfile,id), HttpStatus.OK);
+    @GetMapping("/{id}")
+    public ResponseEntity<GetProfileDTO> getProfileById(@PathVariable(name = "id") int id){
+        return new ResponseEntity<>(this.profileService.getProfileById(id), HttpStatus.OK);
     }
-    @PutMapping("/toggleFollow/{myId}/{id}")
-    public void toggleFollow(@PathVariable(name="myId") int myId,@PathVariable(name = "id") int id){
-        this.profileService.toggleFollow(myId,id);
+    @GetMapping("/search/{keyWord}")
+    public ResponseEntity<List<GetProfileDTO>> searchProfile(@PathVariable(name = "keyWord") String keyWord){
+        return new ResponseEntity<>(this.profileService.searchProfile(keyWord),HttpStatus.OK );
     }
-    @PutMapping("/removeFollower/{myId}/{id}")
-    public void removeFollower(@PathVariable(name="myId") int myId,@PathVariable int id){
-        this.profileService.removeFollower(myId,id);
+    @PutMapping("/toggleFollow/{id}")
+    public void toggleFollow(@PathVariable(name = "id") int id){
+        this.profileService.toggleFollow(id);
     }
+    @PutMapping("/removeFollower/{id}")
+    public void removeFollower(@PathVariable int id){
+        this.profileService.removeFollower(id);
+    }
+
 }

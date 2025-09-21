@@ -45,13 +45,7 @@ private  UserRepository userRepository;
      );
 
      }
-         public List<GetUserDTO> findByFirstnameOrLastnameContaining(String name){
-            
-        return this.userRepository.findByFirstnameOrLastnameContaining(name).stream().map(
-                UserMapper::toGetUserDTO
-        ).collect(Collectors.toList());
 
-     }
     public User getUserObjectByUserEmail(String email){
         return this.userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException(""));
     }

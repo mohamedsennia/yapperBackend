@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GetProfileDTO {
     private int id;
-    private String ownerFirstName;
-    private String ownerLastName;
+       private String profileName;
     private int ownerId;
     private int subscribers;
     private int subscribtions;
@@ -18,10 +17,9 @@ public class GetProfileDTO {
     private boolean isMe;
     private int conversationId;
 
-    public GetProfileDTO(int id, String ownerFirstName, String ownerLastName, int ownerId, int subscribers, int subscribtions) {
+    public GetProfileDTO(int id, String profileName, int ownerId, int subscribers, int subscribtions) {
         this.id = id;
-        this.ownerFirstName = ownerFirstName;
-        this.ownerLastName = ownerLastName;
+        this.profileName=profileName;
         this.ownerId = ownerId;
         this.subscribers = subscribers;
         this.subscribtions = subscribtions;

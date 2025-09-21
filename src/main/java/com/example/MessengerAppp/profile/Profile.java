@@ -28,6 +28,7 @@ public class Profile {
             strategy = GenerationType.SEQUENCE
     )
     private int id;
+    private String profileName;
     @OneToMany(mappedBy = "profile")
     private List<Post> posts;
     @OneToOne
@@ -56,6 +57,7 @@ public class Profile {
     @OneToMany(mappedBy = "sender")
     private Set<Message> messagesSent;
     public Profile(User owner){
+        this.profileName=owner.getLastName()+" "+owner.getFirstName();
         this.owner=owner;
     }
     public void follows(Profile profile){

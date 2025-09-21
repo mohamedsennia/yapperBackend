@@ -29,12 +29,10 @@ public class ConversationService {
         this.conversationRepository=conversationRepository;
         this.userService=userService;
     }
-    public Page<GetConversationDTO> getConversations(int profileId,int pageNumber){
-        if (userService.getUserObjectByUserEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getProfile().getId()!=profileId){
-            throw new NotAuthorisedException("Action not autorized");
-        }
+    public Page<GetConversationDTO> getConversations(int pageNumber){
+
         Pageable pageable =  PageRequest.of(pageNumber,this.conversationPageSize);
-        return toDtoPages(this.conversationRepository.findAllByProfileId(profileId,pageable),pageable);
+        return toDtoPages(this.conversationRepository.findAllByProfileId(userService.getUserObjectByUserEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getProfile().getId(),pageable),pageable);
     }
     public Conversation getConversationObjectById(int id){
        return this.conversationRepository.findById(id).orElseThrow(()-> new NotFoundException("conversation Not found"));

@@ -19,8 +19,7 @@ public interface ConversationRepository extends JpaRepository<Conversation,Integ
     SELECT c
     FROM Conversation c
     JOIN c.participants p
-    WHERE c.type = 'A'
-      AND p.id IN (:profileId1, :profileId2)
+    WHERE  p.id IN (:profileId1, :profileId2)
     GROUP BY c.id
     HAVING COUNT(DISTINCT p.id) = 2
 """)
