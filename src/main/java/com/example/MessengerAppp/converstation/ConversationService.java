@@ -5,6 +5,7 @@ import com.example.MessengerAppp.exception.NotFoundException;
 import com.example.MessengerAppp.post.GetPostDTO;
 import com.example.MessengerAppp.post.Post;
 import com.example.MessengerAppp.post.PostMapper;
+import com.example.MessengerAppp.profile.Profile;
 import com.example.MessengerAppp.profile.ProfileService;
 import com.example.MessengerAppp.user.User;
 import com.example.MessengerAppp.user.UserService;
@@ -16,7 +17,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,6 +43,13 @@ public class ConversationService {
     public int getConversationBetween(int profileId1,int profileId2){
         Optional<Conversation> conversationBetweenProfiles = this.conversationRepository.findConversationBetweenProfiles(profileId1, profileId2);
         return conversationBetweenProfiles.map(Conversation::getId).orElse(-1);
+    }
+    public int createConversation(Set<Profile> participants){
+        Conversation conversation=new Conversation();
+        conversation.setType(ConversationType.Private);
+        conversation.setMessages(new ArrayList<>());
+        conversation.setParticipants(participants);
+       return this.conversationRepository.save(conversation).getId();
     }
     private Page<GetConversationDTO> toDtoPages(Page<Conversation> page, Pageable pageable){
 

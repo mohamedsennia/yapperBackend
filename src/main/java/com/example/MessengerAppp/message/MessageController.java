@@ -22,16 +22,29 @@ import java.util.List;
                 RequestMethod.DELETE,
                 RequestMethod.POST
         })
-@Controller
-    @RequestMapping("/messsages")
+@RestController
+    @RequestMapping("api/messsages")
 public class MessageController {
     private MessageService messageService;
     SimpMessagingTemplate messagingTemplate;
-//    @Autowired
-//public MessageController(MessageService messageService, SimpMessagingTemplate messagingTemplate){
-//        this.messageService=messageService;
-//        this.messagingTemplate=messagingTemplate;
-//    }
+    @Autowired
+public MessageController(MessageService messageService, SimpMessagingTemplate messagingTemplate){
+        this.messageService=messageService;
+        this.messagingTemplate=messagingTemplate;
+    }
+    @PostMapping("/newConversation/{target}")
+    public void newConversation(@RequestBody AddMessageDTO message,@PathVariable("target")int target){
+            this.messageService.newConversation(message,target);
+    }
+    @PostMapping()
+    public void sendMessage(@RequestBody AddMessageDTO message){
+        //
+        this.messageService.sendMessage(message);
+    }
+    @GetMapping("/byConversationId/{id}")
+    public ResponseEntity<List<GetMessageDTO>> getMessagesByConversationId(@PathVariable("id") int id){
+        return  new ResponseEntity<>(this.messageService.getMessagesByConversationId(id),HttpStatus.OK );
+    }
 //    @MessageMapping("/chat")
 //    public void sendMessage(@Payload MessageDTO messageDTO) {
 //        this.messageService.save(Mapper.toMessage(messageDTO));
