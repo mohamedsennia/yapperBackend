@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ConversationRepository extends JpaRepository<Conversation,Integer>{
@@ -15,6 +16,12 @@ public interface ConversationRepository extends JpaRepository<Conversation,Integ
             where p.id=:profileId
             """)
     Page<Conversation> findAllByProfileId(@Param("profileId") int profileId, Pageable pageable);
+    @Query("""
+            SELECT C FROM Conversation C
+            JOIN C.participants p
+            where p.id=:profileId
+            """)
+    List<Conversation> findAllByProfileId(@Param("profileId") int profileId);
     @Query("""
     SELECT c
     FROM Conversation c

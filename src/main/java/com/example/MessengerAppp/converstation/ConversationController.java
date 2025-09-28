@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/conversation")
 public class ConversationController {
@@ -18,7 +20,11 @@ public class ConversationController {
         this.conversationService=conversationService;
     }
     @GetMapping("/{page}")
-    public ResponseEntity<Page<GetConversationDTO>> getConversationsByProfile(@PathVariable(name = "page") int page){
+    public ResponseEntity<Page<GetConversationDTO>> getConversationsPageByProfile(@PathVariable(name = "page") int page){
         return new ResponseEntity<Page<GetConversationDTO>>(this.conversationService.getConversations(page), HttpStatus.OK);
+    }
+    @GetMapping("")
+    public ResponseEntity<List<GetConversationDTO>> getConversationsPageByProfile(){
+        return new ResponseEntity<>(this.conversationService.getConversations(),HttpStatus.OK);
     }
 }

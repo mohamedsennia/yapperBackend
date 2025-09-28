@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -36,6 +37,9 @@ public class ConversationService {
 
         Pageable pageable =  PageRequest.of(pageNumber,this.conversationPageSize);
         return toDtoPages(this.conversationRepository.findAllByProfileId(userService.getUserObjectByUserEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getProfile().getId(),pageable),pageable);
+    }
+    public List<GetConversationDTO>getConversations(){
+        return this.conversationRepository.findAllByProfileId(userService.getUserObjectByUserEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getProfile().getId()).stream().map(ConversationMapper::toConversationDTO).collect(Collectors.toList());
     }
     public Conversation getConversationObjectById(int id){
        return this.conversationRepository.findById(id).orElseThrow(()-> new NotFoundException("conversation Not found"));

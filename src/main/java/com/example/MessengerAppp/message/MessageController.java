@@ -9,6 +9,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 @CrossOrigin(
         origins = {
@@ -22,7 +23,7 @@ import java.util.List;
                 RequestMethod.DELETE,
                 RequestMethod.POST
         })
-@RestController
+@Controller
     @RequestMapping("api/messsages")
 public class MessageController {
     private MessageService messageService;
@@ -32,15 +33,12 @@ public MessageController(MessageService messageService, SimpMessagingTemplate me
         this.messageService=messageService;
         this.messagingTemplate=messagingTemplate;
     }
-    @PostMapping("/newConversation/{target}")
-    public void newConversation(@RequestBody AddMessageDTO message,@PathVariable("target")int target){
-            this.messageService.newConversation(message,target);
+    @MessageMapping("/chat")
+    public void sendMessage(@Payload AddMessageDTO message, Principal principal){
+
+            this.messageService.sendMessage(message,principal);
     }
-    @PostMapping()
-    public void sendMessage(@RequestBody AddMessageDTO message){
-        //
-        this.messageService.sendMessage(message);
-    }
+
     @GetMapping("/byConversationId/{id}")
     public ResponseEntity<List<GetMessageDTO>> getMessagesByConversationId(@PathVariable("id") int id){
         return  new ResponseEntity<>(this.messageService.getMessagesByConversationId(id),HttpStatus.OK );

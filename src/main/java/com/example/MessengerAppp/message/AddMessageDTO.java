@@ -12,5 +12,6 @@ public class AddMessageDTO {
     private int profileId;
     private String content;
     private int conversationId;
+    private int targetId;
 
 }
