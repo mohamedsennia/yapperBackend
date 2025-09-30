@@ -7,6 +7,7 @@ import com.example.MessengerAppp.exception.NotAuthorisedException;
 import com.example.MessengerAppp.exception.NotFoundException;
 import com.example.MessengerAppp.profile.Profile;
 import com.example.MessengerAppp.profile.ProfileService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -36,7 +37,7 @@ private SimpMessagingTemplate messagingTemplate;
 //    public Message save(Message message){
 //     return   this.messagerRpository.save(message);
 //    }
-
+    @Transactional
     public void sendMessage(AddMessageDTO addMessageDTO, Principal principal){
 
         Message message=MessageMapper.toMessage(addMessageDTO);
@@ -54,10 +55,12 @@ private SimpMessagingTemplate messagingTemplate;
             participants.add(target);
             conversationId= this.conversationService.createConversation(participants);
         }
-        messagingTemplate.convertAndSendToUser(
-                String.valueOf(conversationId),
-                "/conversation",
-                message.content
+
+
+        messagingTemplate.convertAndSend(
+
+                "/conversation/"+String.valueOf(conversationId),
+                MessageMapper.toMessageDTO(message)
         );
         message.setConversation(conversationService.getConversationObjectById(conversationId));
         this.messagerRpository.save(message);
