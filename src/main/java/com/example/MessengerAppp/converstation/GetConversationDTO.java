@@ -12,4 +12,5 @@ public class GetConversationDTO {
     private int id;
     private GetMessageDTO lastMessage;
     private ConversationType conversationType;
+    private String conversationName;
 }

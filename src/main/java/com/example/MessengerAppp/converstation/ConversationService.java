@@ -33,13 +33,25 @@ public class ConversationService {
         this.conversationRepository=conversationRepository;
         this.userService=userService;
     }
-    public Page<GetConversationDTO> getConversations(int pageNumber){
-
-        Pageable pageable =  PageRequest.of(pageNumber,this.conversationPageSize);
-        return toDtoPages(this.conversationRepository.findAllByProfileId(userService.getUserObjectByUserEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getProfile().getId(),pageable),pageable);
-    }
+//    public Page<GetConversationDTO> getConversations(int pageNumber){
+//
+//        Pageable pageable =  PageRequest.of(pageNumber,this.conversationPageSize);
+//        return toDtoPages(this.conversationRepository.findAllByProfileId(userService.getUserObjectByUserEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getProfile().getId(),pageable),pageable);
+//    }
     public List<GetConversationDTO>getConversations(){
-        return this.conversationRepository.findAllByProfileId(userService.getUserObjectByUserEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getProfile().getId()).stream().map(ConversationMapper::toConversationDTO).collect(Collectors.toList());
+        int profileId=userService.getUserObjectByUserEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getProfile().getId();
+        return this.conversationRepository.findAllByProfileId(profileId).stream().map(
+                conversation -> {
+                    GetConversationDTO getConversationDTO=ConversationMapper.toGetConversationDTO(conversation);
+                    for(Profile p : conversation.getParticipants()){
+                        if(p.getId()!=profileId){
+                            getConversationDTO.setConversationName(p.getProfileName());
+                            break;
+                        }
+                    }
+                    return  getConversationDTO;
+                }
+        ).collect(Collectors.toList());
     }
     public Conversation getConversationObjectById(int id){
        return this.conversationRepository.findById(id).orElseThrow(()-> new NotFoundException("conversation Not found"));
@@ -55,13 +67,13 @@ public class ConversationService {
         conversation.setParticipants(participants);
        return this.conversationRepository.save(conversation).getId();
     }
-    private Page<GetConversationDTO> toDtoPages(Page<Conversation> page, Pageable pageable){
-
-        return new PageImpl<GetConversationDTO>(
-                page.getContent().stream().map(ConversationMapper::toConversationDTO).collect(Collectors.toList())
-                ,pageable
-                ,page.getTotalElements()
-        );
-    }
+//    private Page<GetConversationDTO> toDtoPages(Page<Conversation> page, Pageable pageable){
+//
+//        return new PageImpl<GetConversationDTO>(
+//                page.getContent().stream().map(ConversationMapper::toConversationDTO).collect(Collectors.toList())
+//                ,pageable
+//                ,page.getTotalElements()
+//        );
+//    }
 
 }

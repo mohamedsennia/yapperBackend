@@ -48,20 +48,28 @@ private SimpMessagingTemplate messagingTemplate;
         Profile sender=profileService.getProfileSubjectById(addMessageDTO.getProfileId());
         int conversationId=addMessageDTO.getConversationId();
         message.setSender(sender);
+
         if(conversationId==-1){
             Profile target=profileService.getProfileSubjectById(addMessageDTO.getTargetId());
             Set<Profile> participants=new HashSet<Profile>();
             participants.add(sender);
             participants.add(target);
             conversationId= this.conversationService.createConversation(participants);
+            messagingTemplate.convertAndSendToUser(
+                    String.valueOf(target.getId()),
+                    "/user/",
+                    MessageMapper.toMessageDTO(message)
+            );
+        }else{
+            messagingTemplate.convertAndSend(
+
+                    "/conversation/"+String.valueOf(conversationId),
+                    MessageMapper.toMessageDTO(message)
+            );
         }
 
 
-        messagingTemplate.convertAndSend(
 
-                "/conversation/"+String.valueOf(conversationId),
-                MessageMapper.toMessageDTO(message)
-        );
         message.setConversation(conversationService.getConversationObjectById(conversationId));
         this.messagerRpository.save(message);
     }

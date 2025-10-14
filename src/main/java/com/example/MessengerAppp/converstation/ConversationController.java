@@ -19,10 +19,10 @@ public class ConversationController {
     public ConversationController(ConversationService conversationService){
         this.conversationService=conversationService;
     }
-    @GetMapping("/{page}")
-    public ResponseEntity<Page<GetConversationDTO>> getConversationsPageByProfile(@PathVariable(name = "page") int page){
-        return new ResponseEntity<Page<GetConversationDTO>>(this.conversationService.getConversations(page), HttpStatus.OK);
-    }
+//    @GetMapping("/{page}")
+//    public ResponseEntity<Page<GetConversationDTO>> getConversationsPageByProfile(@PathVariable(name = "page") int page){
+//        return new ResponseEntity<Page<GetConversationDTO>>(this.conversationService.getConversations(page), HttpStatus.OK);
+//    }
     @GetMapping("")
     public ResponseEntity<List<GetConversationDTO>> getConversationsPageByProfile(){
         return new ResponseEntity<>(this.conversationService.getConversations(),HttpStatus.OK);
