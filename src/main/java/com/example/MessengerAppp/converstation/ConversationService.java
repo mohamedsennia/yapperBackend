@@ -67,6 +67,9 @@ public class ConversationService {
         conversation.setParticipants(participants);
        return this.conversationRepository.save(conversation).getId();
     }
+    public GetConversationDTO getConversationById(int id){
+       return this.conversationRepository.findById(id).map(ConversationMapper::toGetConversationDTO).orElseThrow(()->new NotFoundException("Profile not found"));
+    }
 //    private Page<GetConversationDTO> toDtoPages(Page<Conversation> page, Pageable pageable){
 //
 //        return new PageImpl<GetConversationDTO>(

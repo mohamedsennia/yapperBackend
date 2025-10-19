@@ -57,9 +57,9 @@ private SimpMessagingTemplate messagingTemplate;
             conversationId= this.conversationService.createConversation(participants);
 
             messagingTemplate.convertAndSendToUser(
-                    String.valueOf(target.getId()),
+                    target.getOwner().getEmail(),
                     "/notification/messages",
-                    MessageMapper.toMessageDTO(message)
+                    conversationId
             );
         }else{
             messagingTemplate.convertAndSend(

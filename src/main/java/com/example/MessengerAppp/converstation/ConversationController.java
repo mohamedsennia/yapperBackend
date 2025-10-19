@@ -27,4 +27,8 @@ public class ConversationController {
     public ResponseEntity<List<GetConversationDTO>> getConversationsPageByProfile(){
         return new ResponseEntity<>(this.conversationService.getConversations(),HttpStatus.OK);
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<GetConversationDTO> getConversationById(@PathVariable(name = "id") int id){
+        return new ResponseEntity<>(this.conversationService.getConversationById(id),HttpStatus.OK );
+    }
 }
