@@ -16,6 +16,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +62,7 @@ public class ConversationService {
         Optional<Conversation> conversationBetweenProfiles = this.conversationRepository.findConversationBetweenProfiles(profileId1, profileId2);
         return conversationBetweenProfiles.map(Conversation::getId).orElse(-1);
     }
+    @Transactional(propagation= Propagation.REQUIRES_NEW)
     public int createConversation(Set<Profile> participants){
         Conversation conversation=new Conversation();
         conversation.setType(ConversationType.Private);
@@ -68,7 +71,23 @@ public class ConversationService {
        return this.conversationRepository.save(conversation).getId();
     }
     public GetConversationDTO getConversationById(int id){
-       return this.conversationRepository.findById(id).map(ConversationMapper::toGetConversationDTO).orElseThrow(()->new NotFoundException("Profile not found"));
+
+        int profileId=userService.getUserObjectByUserEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getProfile().getId();
+        Optional<Conversation> optionalConversation=this.conversationRepository.findById(id);
+
+        if(optionalConversation.isEmpty()){
+
+            throw new NotFoundException("Conversation Not Found");
+        }
+
+        GetConversationDTO getConversationDTO=ConversationMapper.toGetConversationDTO(optionalConversation.get());
+        for(Profile p : optionalConversation.get().getParticipants()){
+            if(p.getId()!=profileId){
+                getConversationDTO.setConversationName(p.getProfileName());
+                break;
+            }
+        }
+        return getConversationDTO;
     }
 //    private Page<GetConversationDTO> toDtoPages(Page<Conversation> page, Pageable pageable){
 //

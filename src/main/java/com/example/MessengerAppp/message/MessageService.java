@@ -5,6 +5,8 @@ import com.example.MessengerAppp.converstation.ConversationService;
 import com.example.MessengerAppp.exception.AlreadyExistsException;
 import com.example.MessengerAppp.exception.NotAuthorisedException;
 import com.example.MessengerAppp.exception.NotFoundException;
+import com.example.MessengerAppp.notification.Notification;
+import com.example.MessengerAppp.notification.NotificationType;
 import com.example.MessengerAppp.profile.Profile;
 import com.example.MessengerAppp.profile.ProfileService;
 import jakarta.transaction.Transactional;
@@ -49,30 +51,39 @@ private SimpMessagingTemplate messagingTemplate;
         int conversationId=addMessageDTO.getConversationId();
         message.setSender(sender);
 
-        if(conversationId==-1){
+        if(conversationId<0){
             Profile target=profileService.getProfileSubjectById(addMessageDTO.getTargetId());
             Set<Profile> participants=new HashSet<Profile>();
             participants.add(sender);
             participants.add(target);
+            int originId=conversationId;
             conversationId= this.conversationService.createConversation(participants);
-
+            message.setConversation(conversationService.getConversationObjectById(conversationId));
+            this.messagerRpository.save(message);
             messagingTemplate.convertAndSendToUser(
                     target.getOwner().getEmail(),
                     "/notification/messages",
-                    conversationId
+                    new Notification(String.valueOf(conversationId), NotificationType.NewConversation)
             );
+            messagingTemplate.convertAndSendToUser(
+                    principal.getName(),
+                    "/notification/messages",
+                    new Notification(String.valueOf(originId)+":"+String.valueOf(conversationId),NotificationType.IdUpdate)
+            );
+
         }else{
             messagingTemplate.convertAndSend(
 
                     "/conversation/"+String.valueOf(conversationId),
                     MessageMapper.toMessageDTO(message)
             );
+            message.setConversation(conversationService.getConversationObjectById(conversationId));
+            this.messagerRpository.save(message);
         }
 
 
 
-        message.setConversation(conversationService.getConversationObjectById(conversationId));
-        this.messagerRpository.save(message);
+
     }
 
     public List<GetMessageDTO> getMessagesByConversationId(int id){
