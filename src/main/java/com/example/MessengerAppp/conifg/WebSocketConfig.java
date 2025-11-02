@@ -61,7 +61,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins("http://localhost:4200","https://senniayapper.netlify.app")
-
+                        .allowCredentials(true)
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH")
                         .allowedHeaders("*");
             }

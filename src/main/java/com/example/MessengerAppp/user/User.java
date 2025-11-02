@@ -3,6 +3,7 @@ package com.example.MessengerAppp.user;
 import com.example.MessengerAppp.message.Message;
 import com.example.MessengerAppp.post.Post;
 import com.example.MessengerAppp.profile.Profile;
+import com.example.MessengerAppp.refreshToken.RefreshToken;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -53,7 +54,9 @@ public class User implements UserDetails {
     private Role role;
     @OneToOne(mappedBy = "owner")
     private Profile profile;
-
+    @OneToOne()
+    @JoinColumn(name = "owner")
+    private RefreshToken refreshToken;
 
 
 
