@@ -13,10 +13,7 @@ COPY target/*.jar app.jar
 EXPOSE 8080
 
 # Environment variables
-ENV DB_Name=MessengerApp
-ENV DB_Password=root
-ENV DB_Port=5432
-ENV DB_USER=postgres
+
 ENV Host_Name=host.docker.internal
 
 # Run the jar file
