@@ -12,8 +12,7 @@ COPY target/*.jar app.jar
 # Make port 8080 available to the world outside this container
 EXPOSE 8080
 
-# Environment variables
-
+# Environment variable
 ENV Host_Name=host.docker.internal
 
 # Run the jar file
