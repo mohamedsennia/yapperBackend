@@ -1,9 +1,7 @@
 package com.example.MessengerAppp.message;
 
-import com.example.MessengerAppp.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -11,6 +9,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 @CrossOrigin(
         origins = {
@@ -25,7 +24,7 @@ import java.util.List;
                 RequestMethod.POST
         })
 @Controller
-    @RequestMapping("/messsages")
+    @RequestMapping("api/messsages")
 public class MessageController {
     private MessageService messageService;
     SimpMessagingTemplate messagingTemplate;
@@ -35,24 +34,34 @@ public MessageController(MessageService messageService, SimpMessagingTemplate me
         this.messagingTemplate=messagingTemplate;
     }
     @MessageMapping("/chat")
-    public void sendMessage(@Payload MessageDTO messageDTO) {
-        this.messageService.save(Mapper.toMessage(messageDTO));
-       messagingTemplate.convertAndSendToUser(
-                String.valueOf(messageDTO.recipientId),
-                "/topic/messages",
-                messageDTO
-        );
+    public void sendMessage(@Payload AddMessageDTO message, Principal principal){
 
+            this.messageService.sendMessage(message,principal);
+    }
 
+    @GetMapping("/byConversationId/{id}")
+    public ResponseEntity<List<GetMessageDTO>> getMessagesByConversationId(@PathVariable("id") int id){
+        return  new ResponseEntity<>(this.messageService.getMessagesByConversationId(id),HttpStatus.OK );
     }
-    @GetMapping("/getMessagesWhereUserInvolved/{id}")
-    public List<Message> findMessageWhereUserInvolved(@PathVariable int id){
-        return this.messageService.findMessageWhereUserInvolved(id);
-    }
-    @GetMapping("/conversationBetween/{user1}/{user2}")
-    public ResponseEntity<List<MessageDTO>> conversationBetween(@PathVariable(name = "user1") int user1,@PathVariable(name = "user2") int user2){
-        return new ResponseEntity<>(this.messageService.conversationBetween(user1,user2), HttpStatus.OK);
-    }
+//    @MessageMapping("/chat")
+//    public void sendMessage(@Payload MessageDTO messageDTO) {
+//        this.messageService.save(Mapper.toMessage(messageDTO));
+//       messagingTemplate.convertAndSendToUser(
+//                String.valueOf(messageDTO.recipientId),
+//                "/topic/messages",
+//                messageDTO
+//        );
+//
+//
+//    }
+//    @GetMapping("/getMessagesWhereUserInvolved/{id}")
+//    public List<Message> findMessageWhereUserInvolved(@PathVariable int id){
+//        return this.messageService.findMessageWhereUserInvolved(id);
+//    }
+//    @GetMapping("/conversationBetween/{user1}/{user2}")
+//    public ResponseEntity<List<MessageDTO>> conversationBetween(@PathVariable(name = "user1") int user1,@PathVariable(name = "user2") int user2){
+//        return new ResponseEntity<>(this.messageService.conversationBetween(user1,user2), HttpStatus.OK);
+//    }
 
 
 }

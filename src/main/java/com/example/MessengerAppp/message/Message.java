@@ -1,5 +1,7 @@
 package com.example.MessengerAppp.message;
 
+import com.example.MessengerAppp.converstation.Conversation;
+import com.example.MessengerAppp.profile.Profile;
 import com.example.MessengerAppp.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -25,14 +27,20 @@ public class Message {
             generator="Message_sequence"
     )
     int id;
+
     String content;
     Date time;
 
     @ManyToOne
     @JoinColumn(name = "senderId")
-    User sender;
+    Profile sender;
     @ManyToOne
-    @JoinColumn(name = "recipientId")
-    User recipient;
+    @JoinColumn(name = "conversationId")
+    Conversation conversation;
 
+    public Message(String content, Date time) {
+        this.content = content;
+        this.time = time;
+
+    }
 }

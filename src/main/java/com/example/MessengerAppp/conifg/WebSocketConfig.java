@@ -23,14 +23,14 @@ import java.util.List;
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
    @Autowired
     private MessageLoggingInterceptor messageLoggingInterceptor;
-    @Override
+        @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/messenger").setAllowedOrigins("http://localhost:4200","https://senniayapper.netlify.app").withSockJS();
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-                registry.enableSimpleBroker("/topic","/user");
+                registry.enableSimpleBroker("/conversation","/notification");
                 registry.setApplicationDestinationPrefixes("/app");
                 registry.setUserDestinationPrefix("/user");
 
@@ -61,8 +61,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins("http://localhost:4200","https://senniayapper.netlify.app")
-
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowCredentials(true)
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH")
                         .allowedHeaders("*");
             }
         };

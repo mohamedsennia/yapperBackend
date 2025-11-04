@@ -12,7 +12,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CostumeResponse {
     private String token;
+    private String refreshToken;
     private Role role;
     private int id;
-
+    private String userName;
+    private int profileId;
 }

@@ -1,11 +1,15 @@
 package com.example.MessengerAppp.auth;
 
+import com.example.MessengerAppp.user.AddUserDTO;
 import com.example.MessengerAppp.user.User;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @CrossOrigin(
         origins = {
@@ -30,18 +34,18 @@ private  final  AuthService authService;
         @PostMapping("/logIn")
         public ResponseEntity<CostumeResponse> logIn(@RequestBody LogInRequest logInRequest){
 
-              try {
-                  return   new ResponseEntity<>(this.authService.logIn(logInRequest),HttpStatus.OK);
-              }catch (UsernameNotFoundException exception){
-                      return  new ResponseEntity<>(HttpStatus.FORBIDDEN);
-              }
+            return   this.authService.logIn(logInRequest);
 
         }
         @PostMapping("/signUp")
-        public ResponseEntity<CostumeResponse> signUp(@RequestBody User user){
-               return new ResponseEntity<>(this.authService.signUp(user), HttpStatus.OK);
-        }
+        public ResponseEntity<CostumeResponse> signUp(@Valid @RequestBody AddUserDTO user){
 
+               return this.authService.signUp(user);
+        }
+        @PostMapping("/refresh")
+        public ResponseEntity<Map<String,String>> refreshToken(@CookieValue("refresh_token")String refreshToken){
+        return     this.authService.refreshToken(refreshToken);
+        }
 
 
 

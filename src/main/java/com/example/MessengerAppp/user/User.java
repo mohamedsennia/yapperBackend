@@ -1,27 +1,34 @@
 package com.example.MessengerAppp.user;
 
 import com.example.MessengerAppp.message.Message;
+import com.example.MessengerAppp.post.Post;
+import com.example.MessengerAppp.profile.Profile;
+import com.example.MessengerAppp.refreshToken.RefreshToken;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "_User")
 
-@Data
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class User implements UserDetails {
+
+
     @Id
     @SequenceGenerator(
             name = "User_sequence",
@@ -36,18 +43,56 @@ public class User implements UserDetails {
     private int id;
 
     private String firstName;
+
     private String lastName;
+
+    @Column(unique = true)
     private String email;
+
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
-    @OneToMany(mappedBy = "sender")
-    private List<Message> messagesSent;
-    @OneToMany(mappedBy = "recipient")
-    private List<Message> messagesReceived;
+    @OneToOne(mappedBy = "owner")
+    private Profile profile;
+    @OneToOne()
+    @JoinColumn(name = "owner")
+    private RefreshToken refreshToken;
 
 
 
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(this.role.name()));
+    }
+    public User(int id, String firstName, String lastName, String email, String password, Role role,List<Message> messagesReceived,List<Message> messagesSent) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+
+    }
+    public User(int id, String firstName, String lastName, String email, String password, Role role) {
+
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+
+    }
+    public User(String firstName, String lastName, String email, String password) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.role = Role.User;
+
+    }
     public int getId() {
         return id;
     }
@@ -88,22 +133,6 @@ public class User implements UserDetails {
         this.role = role;
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(this.role.name()));
-    }
-
-    public User(int id, String firstName, String lastName, String email, String password, Role role) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.password = password;
-        this.role = role;
-        this.messagesReceived=new ArrayList<>();
-        this.messagesSent=new ArrayList<>();
-    }
-
     public String getPassword() {
         return password;
     }
@@ -135,5 +164,13 @@ public class User implements UserDetails {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Profile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
     }
 }
