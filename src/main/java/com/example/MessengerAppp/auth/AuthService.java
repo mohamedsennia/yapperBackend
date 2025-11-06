@@ -42,7 +42,7 @@ public class AuthService {
                 )
         );
         User user=this.userRepository.findByEmail(logInRequest.getUserEmail()).orElseThrow(()->new UsernameNotFoundException("user not found")) ;
-        ResponseCookie cookie= ResponseCookie.from("refresh_token",jwtService.generateRefreshToken(user)).httpOnly(true).path("/api/auth/refresh").maxAge(  60 * 60 * 24 * 7).sameSite("Strict").secure(false).build();
+        ResponseCookie cookie= ResponseCookie.from("refresh_token",jwtService.generateRefreshToken(user)).httpOnly(true).path("/api/auth/refresh").maxAge(  60 * 60 * 24 * 7).sameSite("Strict").secure(true).build();
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE,cookie.toString()).body(CostumeResponse.builder().token(jwtService.generateToken(user)).role(user.getRole()).id(user.getId()).userName(user.getLastName()+" "+user.getFirstName()).profileId(user.getProfile().getId()).build());
     }
     public ResponseEntity<CostumeResponse>  signUp(AddUserDTO user){
