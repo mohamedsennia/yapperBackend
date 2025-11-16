@@ -13,7 +13,7 @@ import java.security.Principal;
 import java.util.List;
 @CrossOrigin(
         origins = {
-                "http://localhost:4200","https://senniayapper.netlify.app/"
+                "http://localhost:4200","https://senniayapper.netlify.app/","https://yapperfrontend-production.up.railway.app/"
 
         },
         methods = {

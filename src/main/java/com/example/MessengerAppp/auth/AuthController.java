@@ -15,7 +15,7 @@ import java.util.Map;
         origins = {
                 "http://localhost:4200",
                 "https://senniayapper.netlify.app/",
-                "https://yapperfrontend-production.up.railway.app/login"
+                "https://yapperfrontend-production.up.railway.app/"
         },
         methods = {
                 RequestMethod.OPTIONS,
