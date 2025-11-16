@@ -9,6 +9,11 @@ import java.util.Optional;
 
 public interface ProfileRepositoty  extends JpaRepository<Profile,Integer> {
 Optional<Profile> findByOwnerEmail(String email);
-@Query("Select p FROM Profile p Where p.profileName LIKE %:keyWord% or p.owner.email Like %:keyWord%")
+    @Query("""
+    SELECT p
+    FROM Profile p
+    WHERE LOWER(p.profileName) LIKE LOWER(CONCAT('%', :keyWord, '%'))
+       OR LOWER(p.owner.email) LIKE LOWER(CONCAT('%', :keyWord, '%'))
+""")
 List<Profile> searchProfile(String keyWord);
 }
