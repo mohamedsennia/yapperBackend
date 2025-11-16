@@ -14,7 +14,8 @@ import java.util.Map;
 @CrossOrigin(
         origins = {
                 "http://localhost:4200",
-                "https://senniayapper.netlify.app/"
+                "https://senniayapper.netlify.app/",
+                "https://yapperfrontend-production.up.railway.app/login"
         },
         methods = {
                 RequestMethod.OPTIONS,
