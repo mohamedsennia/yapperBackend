@@ -11,19 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@CrossOrigin(
-        origins = {
-                "http://localhost:4200",
-                "https://senniayapper.netlify.app/",
-                "https://yapperfrontend-production.up.railway.app/"
-        },
-        methods = {
-                RequestMethod.OPTIONS,
-                RequestMethod.GET,
-                RequestMethod.PUT,
-                RequestMethod.DELETE,
-                RequestMethod.POST
-        })
+
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor

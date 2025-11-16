@@ -11,18 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
-@CrossOrigin(
-        origins = {
-                "http://localhost:4200","https://senniayapper.netlify.app/","https://yapperfrontend-production.up.railway.app/"
 
-        },
-        methods = {
-                RequestMethod.OPTIONS,
-                RequestMethod.GET,
-                RequestMethod.PUT,
-                RequestMethod.DELETE,
-                RequestMethod.POST
-        })
 @Controller
     @RequestMapping("api/messsages")
 public class MessageController {
