@@ -9,12 +9,15 @@ import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.converter.MessageConverter;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
 
 import java.util.List;
 
@@ -30,7 +33,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-                registry.enableSimpleBroker("/conversation","/notification");
+                registry.enableSimpleBroker("/conversation","/notification")
+                        .setHeartbeatValue(new long[]{2000,2000})
+                        .setTaskScheduler(messageBrokerTaskScheduler());
                 registry.setApplicationDestinationPrefixes("/app");
                 registry.setUserDestinationPrefix("/user");
 
@@ -54,6 +59,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureClientOutboundChannel(ChannelRegistration registration) {
         registration.interceptors(messageLoggingInterceptor);
     }
+
+    @Override
+    public void configureWebSocketTransport(WebSocketTransportRegistration registry) {
+        registry.setSendTimeLimit(20*1000);
+        registry.setSendBufferSizeLimit(512*1024);
+
+    }
+
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
@@ -67,4 +80,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             }
         };
     }
+    @Bean
+    public TaskScheduler messageBrokerTaskScheduler(){
+            return  new ThreadPoolTaskScheduler();
+    }
+
 }
