@@ -35,7 +35,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry registry) {
                 registry.enableSimpleBroker("/conversation","/notification")
                         .setHeartbeatValue(new long[]{2000,2000})
-                        .setTaskScheduler(messageBrokerTaskScheduler());
+                        .setTaskScheduler(myWebsocketTaskScheduler());
                 registry.setApplicationDestinationPrefixes("/app");
                 registry.setUserDestinationPrefix("/user");
 
@@ -81,8 +81,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         };
     }
     @Bean
-    public TaskScheduler messageBrokerTaskScheduler(){
-            return  new ThreadPoolTaskScheduler();
+    public TaskScheduler myWebsocketTaskScheduler(){
+            ThreadPoolTaskScheduler scheduler= new ThreadPoolTaskScheduler();
+            scheduler.setPoolSize(1);
+            scheduler.setThreadNamePrefix("ws-heartbeat");
+            return  scheduler;
     }
 
 }
