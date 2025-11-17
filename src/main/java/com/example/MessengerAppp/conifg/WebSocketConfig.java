@@ -34,7 +34,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
                 registry.enableSimpleBroker("/conversation","/notification")
-                        .setHeartbeatValue(new long[]{2000,2000})
+                        .setHeartbeatValue(new long[]{20000,20000})
                         .setTaskScheduler(myWebsocketTaskScheduler());
                 registry.setApplicationDestinationPrefixes("/app");
                 registry.setUserDestinationPrefix("/user");
@@ -50,6 +50,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         messageConverters.add(converter);
         return false;
     }
+
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration.interceptors(messageLoggingInterceptor);
